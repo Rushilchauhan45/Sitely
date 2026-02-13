@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
 import { Language, t } from './i18n';
 import * as store from './storage';
+import { AuthUser } from './storage';
 
 interface AppContextValue {
   language: Language;
@@ -9,6 +10,8 @@ interface AppContextValue {
   onboardingDone: boolean;
   completeOnboarding: () => Promise<void>;
   isReady: boolean;
+  user: AuthUser | null;
+  setUser: (user: AuthUser | null) => void;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -17,13 +20,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [language, setLang] = useState<Language>('en');
   const [onboardingDone, setOnboardingDone] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  const [user, setUser] = useState<AuthUser | null>(null);
 
   useEffect(() => {
     (async () => {
       const lang = await store.getLanguage();
       const done = await store.isOnboardingDone();
+      const authUser = await store.getAuthUser();
       setLang(lang);
       setOnboardingDone(done);
+      setUser(authUser);
       setIsReady(true);
     })();
   }, []);
@@ -47,7 +53,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     onboardingDone,
     completeOnboarding,
     isReady,
-  }), [language, onboardingDone, isReady]);
+    user,
+    setUser,
+  }), [language, onboardingDone, isReady, user]);
 
   return (
     <AppContext.Provider value={value}>

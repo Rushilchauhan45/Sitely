@@ -70,31 +70,31 @@ export default function SiteHomeScreen() {
           <Pressable onPress={() => router.back()} hitSlop={16}>
             <Ionicons name="arrow-back" size={24} color={colors.text} />
           </Pressable>
-          <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]} numberOfLines={1}>
+          <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Poppins_600SemiBold' }]} numberOfLines={1}>
             {t('siteHome')}
           </Text>
           <View style={{ width: 24 }} />
         </View>
         <View style={[styles.siteInfoCard, { backgroundColor: colors.surface, borderColor: colors.borderLight }]}>
-          <Text style={[styles.siteName, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
+          <Text style={[styles.siteName, { color: colors.text, fontFamily: 'Poppins_700Bold' }]}>
             {site.name}
           </Text>
           <View style={styles.siteMetaRow}>
             <View style={styles.metaItem}>
               <Ionicons name="location" size={14} color={colors.primary} />
-              <Text style={[styles.metaText, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
+              <Text style={[styles.metaText, { color: colors.textSecondary, fontFamily: 'Poppins_400Regular' }]}>
                 {site.location || '-'}
               </Text>
             </View>
             <View style={styles.metaItem}>
               <Ionicons name="people" size={14} color={colors.primary} />
-              <Text style={[styles.metaText, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
+              <Text style={[styles.metaText, { color: colors.textSecondary, fontFamily: 'Poppins_400Regular' }]}>
                 {workerCount}
               </Text>
             </View>
             <View style={[styles.statusBadge, { backgroundColor: site.isRunning ? colors.success + '20' : colors.textTertiary + '20' }]}>
               <View style={[styles.statusDot, { backgroundColor: site.isRunning ? colors.success : colors.textTertiary }]} />
-              <Text style={[styles.statusText, { color: site.isRunning ? colors.success : colors.textTertiary, fontFamily: 'Inter_500Medium' }]}>
+              <Text style={[styles.statusText, { color: site.isRunning ? colors.success : colors.textTertiary, fontFamily: 'Poppins_500Medium' }]}>
                 {site.isRunning ? t('running') : t('done')}
               </Text>
             </View>
@@ -129,7 +129,7 @@ export default function SiteHomeScreen() {
                 <MaterialCommunityIcons name={option.icon as any} size={24} color="#FFF" />
               )}
             </LinearGradient>
-            <Text style={[styles.menuLabel, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
+            <Text style={[styles.menuLabel, { color: colors.text, fontFamily: 'Poppins_600SemiBold' }]}>
               {t(option.label)}
             </Text>
             <Ionicons name="chevron-forward" size={18} color={colors.textTertiary} />

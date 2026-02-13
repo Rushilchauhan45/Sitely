@@ -45,7 +45,7 @@ export default function CreateSiteScreen() {
     router.back();
   };
 
-  const inputStyle = [styles.input, { backgroundColor: colors.surfaceElevated, color: colors.text, borderColor: colors.border, fontFamily: 'Inter_400Regular' as const }];
+  const inputStyle = [styles.input, { backgroundColor: colors.surfaceElevated, color: colors.text, borderColor: colors.border, fontFamily: 'Poppins_400Regular' as const }];
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -53,7 +53,7 @@ export default function CreateSiteScreen() {
         <Pressable onPress={() => router.back()} hitSlop={16}>
           <Ionicons name="close" size={28} color={colors.text} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
+        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Poppins_600SemiBold' }]}>
           {t('createNewSite')}
         </Text>
         <Pressable
@@ -65,10 +65,10 @@ export default function CreateSiteScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.form} showsVerticalScrollIndicator={false}>
-        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t('siteName')} *</Text>
+        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>{t('siteName')} *</Text>
         <TextInput style={inputStyle} value={name} onChangeText={setName} placeholder={t('siteName')} placeholderTextColor={colors.textTertiary} />
 
-        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t('siteType')}</Text>
+        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>{t('siteType')}</Text>
         <View style={styles.typeGrid}>
           {SITE_TYPES.map((st) => (
             <Pressable
@@ -82,21 +82,21 @@ export default function CreateSiteScreen() {
                 },
               ]}
             >
-              <Text style={[styles.typeChipText, { color: type === st ? colors.primary : colors.textSecondary, fontFamily: type === st ? 'Inter_600SemiBold' : 'Inter_400Regular' as any }]}>
+              <Text style={[styles.typeChipText, { color: type === st ? colors.primary : colors.textSecondary, fontFamily: type === st ? 'Poppins_600SemiBold' : 'Poppins_400Regular' as any }]}>
                 {t(st)}
               </Text>
             </Pressable>
           ))}
         </View>
 
-        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t('siteLocation')}</Text>
+        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>{t('siteLocation')}</Text>
         <TextInput style={inputStyle} value={location} onChangeText={setLocation} placeholder={t('siteLocation')} placeholderTextColor={colors.textTertiary} />
 
-        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t('startDate')}</Text>
+        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>{t('startDate')}</Text>
         <TextInput style={inputStyle} value={startDate} onChangeText={setStartDate} placeholder="YYYY-MM-DD" placeholderTextColor={colors.textTertiary} />
 
         <View style={styles.switchRow}>
-          <Text style={[styles.switchLabel, { color: colors.text, fontFamily: 'Inter_500Medium' }]}>{t('running')}</Text>
+          <Text style={[styles.switchLabel, { color: colors.text, fontFamily: 'Poppins_500Medium' }]}>{t('running')}</Text>
           <Switch
             value={isRunning}
             onValueChange={setIsRunning}
@@ -107,15 +107,15 @@ export default function CreateSiteScreen() {
 
         {!isRunning && (
           <>
-            <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t('endDate')}</Text>
+            <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>{t('endDate')}</Text>
             <TextInput style={inputStyle} value={endDate} onChangeText={setEndDate} placeholder="YYYY-MM-DD" placeholderTextColor={colors.textTertiary} />
           </>
         )}
 
-        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t('ownerName')}</Text>
+        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>{t('ownerName')}</Text>
         <TextInput style={inputStyle} value={ownerName} onChangeText={setOwnerName} placeholder={t('ownerName')} placeholderTextColor={colors.textTertiary} />
 
-        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t('contactDetails')} *</Text>
+        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>{t('contactDetails')} *</Text>
         <TextInput style={inputStyle} value={contact} onChangeText={setContact} placeholder={t('contactDetails')} placeholderTextColor={colors.textTertiary} keyboardType="phone-pad" />
 
         <View style={{ height: 40 }} />

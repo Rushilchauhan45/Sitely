@@ -99,23 +99,23 @@ export default function ExpenseScreen() {
         {item.selected && <Ionicons name="checkmark" size={14} color="#FFF" />}
       </View>
       <View style={[styles.avatar, { backgroundColor: colors.primary + '20' }]}>
-        <Text style={[styles.avatarText, { color: colors.primary, fontFamily: 'Inter_700Bold' }]}>
+        <Text style={[styles.avatarText, { color: colors.primary, fontFamily: 'Poppins_700Bold' }]}>
           {getInitials(item.worker.name)}
         </Text>
       </View>
       <View style={styles.entryInfo}>
-        <Text style={[styles.entryName, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
+        <Text style={[styles.entryName, { color: colors.text, fontFamily: 'Poppins_600SemiBold' }]}>
           {item.worker.name}
         </Text>
         <View style={[styles.catBadge, { backgroundColor: item.worker.category === 'karigar' ? '#7C3AED20' : '#E8840C20' }]}>
-          <Text style={[styles.catText, { color: item.worker.category === 'karigar' ? '#7C3AED' : '#E8840C', fontFamily: 'Inter_500Medium' }]}>
+          <Text style={[styles.catText, { color: item.worker.category === 'karigar' ? '#7C3AED' : '#E8840C', fontFamily: 'Poppins_500Medium' }]}>
             {t(item.worker.category)}
           </Text>
         </View>
       </View>
       {item.selected && (
         <TextInput
-          style={[styles.amountInput, { backgroundColor: colors.surfaceElevated, color: colors.text, borderColor: colors.border, fontFamily: 'Inter_500Medium' }]}
+          style={[styles.amountInput, { backgroundColor: colors.surfaceElevated, color: colors.text, borderColor: colors.border, fontFamily: 'Poppins_500Medium' }]}
           value={item.amount}
           onChangeText={(v) => updateAmount(index, v)}
           placeholder="0"
@@ -132,7 +132,7 @@ export default function ExpenseScreen() {
         <Pressable onPress={() => router.back()} hitSlop={16}>
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
+        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Poppins_600SemiBold' }]}>
           {t('addExpense')}
         </Text>
         <Pressable onPress={toggleSelectAll} hitSlop={16}>
@@ -149,7 +149,7 @@ export default function ExpenseScreen() {
         ListEmptyComponent={
           <View style={styles.empty}>
             <Ionicons name="receipt-outline" size={56} color={colors.textTertiary} />
-            <Text style={[styles.emptyText, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
+            <Text style={[styles.emptyText, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>
               {t('noWorkers')}
             </Text>
           </View>
@@ -163,7 +163,7 @@ export default function ExpenseScreen() {
             onPress={handleSubmit}
           >
             <Ionicons name="checkmark-circle" size={20} color="#FFF" />
-            <Text style={[styles.submitText, { fontFamily: 'Inter_600SemiBold' }]}>
+            <Text style={[styles.submitText, { fontFamily: 'Poppins_600SemiBold' }]}>
               {t('submitExpense')}
             </Text>
           </Pressable>

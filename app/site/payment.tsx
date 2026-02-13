@@ -88,16 +88,16 @@ export default function PaymentScreen() {
       >
         <View style={styles.cardHeader}>
           <View style={[styles.avatar, { backgroundColor: colors.primary + '20' }]}>
-            <Text style={[styles.avatarText, { color: colors.primary, fontFamily: 'Inter_700Bold' }]}>
+            <Text style={[styles.avatarText, { color: colors.primary, fontFamily: 'Poppins_700Bold' }]}>
               {getInitials(item.worker.name)}
             </Text>
           </View>
           <View style={styles.cardInfo}>
-            <Text style={[styles.workerName, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
+            <Text style={[styles.workerName, { color: colors.text, fontFamily: 'Poppins_600SemiBold' }]}>
               {item.worker.name}
             </Text>
             <View style={[styles.catBadge, { backgroundColor: item.worker.category === 'karigar' ? '#7C3AED20' : '#E8840C20' }]}>
-              <Text style={[styles.catText, { color: item.worker.category === 'karigar' ? '#7C3AED' : '#E8840C', fontFamily: 'Inter_500Medium' }]}>
+              <Text style={[styles.catText, { color: item.worker.category === 'karigar' ? '#7C3AED' : '#E8840C', fontFamily: 'Poppins_500Medium' }]}>
                 {t(item.worker.category)}
               </Text>
             </View>
@@ -107,27 +107,27 @@ export default function PaymentScreen() {
 
         <View style={styles.statsRow}>
           <View style={styles.statItem}>
-            <Text style={[styles.statLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t('totalHajari')}</Text>
-            <Text style={[styles.statValue, { color: colors.success, fontFamily: 'Inter_600SemiBold' }]}>{formatCurrency(item.totalHajari)}</Text>
+            <Text style={[styles.statLabel, { color: colors.textTertiary, fontFamily: 'Poppins_400Regular' }]}>{t('totalHajari')}</Text>
+            <Text style={[styles.statValue, { color: colors.success, fontFamily: 'Poppins_600SemiBold' }]}>{formatCurrency(item.totalHajari)}</Text>
           </View>
           <View style={styles.statItem}>
-            <Text style={[styles.statLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t('totalExpense')}</Text>
-            <Text style={[styles.statValue, { color: colors.error, fontFamily: 'Inter_600SemiBold' }]}>{formatCurrency(item.totalExpense)}</Text>
+            <Text style={[styles.statLabel, { color: colors.textTertiary, fontFamily: 'Poppins_400Regular' }]}>{t('totalExpense')}</Text>
+            <Text style={[styles.statValue, { color: colors.error, fontFamily: 'Poppins_600SemiBold' }]}>{formatCurrency(item.totalExpense)}</Text>
           </View>
           <View style={styles.statItem}>
-            <Text style={[styles.statLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t('totalPaid')}</Text>
-            <Text style={[styles.statValue, { color: colors.accent, fontFamily: 'Inter_600SemiBold' }]}>{formatCurrency(item.totalPaid)}</Text>
+            <Text style={[styles.statLabel, { color: colors.textTertiary, fontFamily: 'Poppins_400Regular' }]}>{t('totalPaid')}</Text>
+            <Text style={[styles.statValue, { color: colors.accent, fontFamily: 'Poppins_600SemiBold' }]}>{formatCurrency(item.totalPaid)}</Text>
           </View>
           <View style={styles.statItem}>
-            <Text style={[styles.statLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t('remaining')}</Text>
-            <Text style={[styles.statValue, { color: item.remaining > 0 ? colors.warning : colors.textTertiary, fontFamily: 'Inter_700Bold' }]}>{formatCurrency(item.remaining)}</Text>
+            <Text style={[styles.statLabel, { color: colors.textTertiary, fontFamily: 'Poppins_400Regular' }]}>{t('remaining')}</Text>
+            <Text style={[styles.statValue, { color: item.remaining > 0 ? colors.warning : colors.textTertiary, fontFamily: 'Poppins_700Bold' }]}>{formatCurrency(item.remaining)}</Text>
           </View>
         </View>
 
         {isSelected && (
           <View style={styles.paySection}>
             <TextInput
-              style={[styles.payInput, { backgroundColor: colors.surfaceElevated, color: colors.text, borderColor: colors.border, fontFamily: 'Inter_500Medium' }]}
+              style={[styles.payInput, { backgroundColor: colors.surfaceElevated, color: colors.text, borderColor: colors.border, fontFamily: 'Poppins_500Medium' }]}
               value={payAmount}
               onChangeText={setPayAmount}
               placeholder={t('enterAmount')}
@@ -139,7 +139,7 @@ export default function PaymentScreen() {
               onPress={() => handlePay(item)}
             >
               <Ionicons name="cash" size={18} color="#FFF" />
-              <Text style={[styles.payBtnText, { fontFamily: 'Inter_600SemiBold' }]}>{t('payNow')}</Text>
+              <Text style={[styles.payBtnText, { fontFamily: 'Poppins_600SemiBold' }]}>{t('payNow')}</Text>
             </Pressable>
           </View>
         )}
@@ -153,7 +153,7 @@ export default function PaymentScreen() {
         <Pressable onPress={() => router.back()} hitSlop={16}>
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
+        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Poppins_600SemiBold' }]}>
           {t('payToWorker')}
         </Text>
         <View style={{ width: 24 }} />
@@ -168,7 +168,7 @@ export default function PaymentScreen() {
         ListEmptyComponent={
           <View style={styles.empty}>
             <Ionicons name="cash-outline" size={56} color={colors.textTertiary} />
-            <Text style={[styles.emptyText, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
+            <Text style={[styles.emptyText, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>
               {t('noWorkers')}
             </Text>
           </View>

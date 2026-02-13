@@ -60,7 +60,7 @@ export default function AddWorkerScreen() {
     return parts.map(p => p[0]?.toUpperCase() || '').slice(0, 2).join('');
   };
 
-  const inputStyle = [styles.input, { backgroundColor: colors.surfaceElevated, color: colors.text, borderColor: colors.border, fontFamily: 'Inter_400Regular' as const }];
+  const inputStyle = [styles.input, { backgroundColor: colors.surfaceElevated, color: colors.text, borderColor: colors.border, fontFamily: 'Poppins_400Regular' as const }];
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -68,7 +68,7 @@ export default function AddWorkerScreen() {
         <Pressable onPress={() => router.back()} hitSlop={16}>
           <Ionicons name="close" size={28} color={colors.text} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
+        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Poppins_600SemiBold' }]}>
           {t('addWorkers')}
         </Text>
         <Pressable
@@ -86,7 +86,7 @@ export default function AddWorkerScreen() {
           ) : (
             <View style={[styles.avatarPlaceholder, { backgroundColor: colors.primary + '20' }]}>
               {name.trim() ? (
-                <Text style={[styles.avatarText, { color: colors.primary, fontFamily: 'Inter_700Bold' }]}>
+                <Text style={[styles.avatarText, { color: colors.primary, fontFamily: 'Poppins_700Bold' }]}>
                   {getInitials(name)}
                 </Text>
               ) : (
@@ -94,24 +94,24 @@ export default function AddWorkerScreen() {
               )}
             </View>
           )}
-          <Text style={[styles.photoLabel, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
+          <Text style={[styles.photoLabel, { color: colors.textSecondary, fontFamily: 'Poppins_400Regular' }]}>
             {t('workerPhoto')}
           </Text>
         </Pressable>
 
-        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t('workerName')} *</Text>
+        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>{t('workerName')} *</Text>
         <TextInput style={inputStyle} value={name} onChangeText={setName} placeholder={t('workerName')} placeholderTextColor={colors.textTertiary} />
 
-        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t('age')}</Text>
+        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>{t('age')}</Text>
         <TextInput style={inputStyle} value={age} onChangeText={setAge} placeholder={t('age')} placeholderTextColor={colors.textTertiary} keyboardType="number-pad" />
 
-        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t('contact')}</Text>
+        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>{t('contact')}</Text>
         <TextInput style={inputStyle} value={contact} onChangeText={setContact} placeholder={t('contact')} placeholderTextColor={colors.textTertiary} keyboardType="phone-pad" />
 
-        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t('village')}</Text>
+        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>{t('village')}</Text>
         <TextInput style={inputStyle} value={village} onChangeText={setVillage} placeholder={t('village')} placeholderTextColor={colors.textTertiary} />
 
-        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t('category')}</Text>
+        <Text style={[styles.label, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>{t('category')}</Text>
         <View style={styles.categoryRow}>
           {(['karigar', 'majdur'] as const).map((cat) => (
             <Pressable
@@ -126,7 +126,7 @@ export default function AddWorkerScreen() {
                 },
               ]}
             >
-              <Text style={[styles.categoryText, { color: category === cat ? colors.primary : colors.textSecondary, fontFamily: category === cat ? 'Inter_600SemiBold' : 'Inter_400Regular' as any }]}>
+              <Text style={[styles.categoryText, { color: category === cat ? colors.primary : colors.textSecondary, fontFamily: category === cat ? 'Poppins_600SemiBold' : 'Poppins_400Regular' as any }]}>
                 {t(cat)}
               </Text>
             </Pressable>

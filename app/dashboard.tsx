@@ -88,16 +88,16 @@ export default function DashboardScreen() {
           <Ionicons name={(siteTypeIcons[item.type] || 'construct') as any} size={20} color="#FFF" />
         </LinearGradient>
         <View style={styles.siteCardInfo}>
-          <Text style={[styles.siteCardName, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]} numberOfLines={1}>
+          <Text style={[styles.siteCardName, { color: colors.text, fontFamily: 'Poppins_600SemiBold' }]} numberOfLines={1}>
             {item.name}
           </Text>
-          <Text style={[styles.siteCardLocation, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]} numberOfLines={1}>
+          <Text style={[styles.siteCardLocation, { color: colors.textSecondary, fontFamily: 'Poppins_400Regular' }]} numberOfLines={1}>
             {item.location}
           </Text>
         </View>
         <View style={[styles.statusBadge, { backgroundColor: item.isRunning ? colors.success + '20' : colors.textTertiary + '20' }]}>
           <View style={[styles.statusDot, { backgroundColor: item.isRunning ? colors.success : colors.textTertiary }]} />
-          <Text style={[styles.statusText, { color: item.isRunning ? colors.success : colors.textTertiary, fontFamily: 'Inter_500Medium' }]}>
+          <Text style={[styles.statusText, { color: item.isRunning ? colors.success : colors.textTertiary, fontFamily: 'Poppins_500Medium' }]}>
             {item.isRunning ? t('running') : t('done')}
           </Text>
         </View>
@@ -105,13 +105,13 @@ export default function DashboardScreen() {
       <View style={styles.siteCardDetails}>
         <View style={styles.siteDetailItem}>
           <Ionicons name="person" size={14} color={colors.textTertiary} />
-          <Text style={[styles.siteDetailText, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
+          <Text style={[styles.siteDetailText, { color: colors.textSecondary, fontFamily: 'Poppins_400Regular' }]}>
             {item.ownerName}
           </Text>
         </View>
         <View style={styles.siteDetailItem}>
           <Ionicons name="calendar" size={14} color={colors.textTertiary} />
-          <Text style={[styles.siteDetailText, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
+          <Text style={[styles.siteDetailText, { color: colors.textSecondary, fontFamily: 'Poppins_400Regular' }]}>
             {new Date(item.startDate).toLocaleDateString()}
           </Text>
         </View>
@@ -125,7 +125,7 @@ export default function DashboardScreen() {
         colors={colorScheme === 'dark' ? ['#1A1F2E', '#0F1219'] : ['#FFF3E0', '#F5F6FA']}
         style={[styles.header, { paddingTop: insets.top + webTopInset + 16 }]}
       >
-        <Text style={[styles.greeting, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
+        <Text style={[styles.greeting, { color: colors.text, fontFamily: 'Poppins_700Bold' }]}>
           {t('welcome')}
         </Text>
         <Pressable
@@ -139,17 +139,17 @@ export default function DashboardScreen() {
           }}
         >
           <Ionicons name="add" size={20} color="#FFF" />
-          <Text style={[styles.createBtnText, { fontFamily: 'Inter_600SemiBold' }]}>
+          <Text style={[styles.createBtnText, { fontFamily: 'Poppins_600SemiBold' }]}>
             {t('createNewSite')}
           </Text>
         </Pressable>
       </LinearGradient>
 
       <View style={styles.listHeader}>
-        <Text style={[styles.listTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
+        <Text style={[styles.listTitle, { color: colors.text, fontFamily: 'Poppins_600SemiBold' }]}>
           {t('viewExistingSites')}
         </Text>
-        <Text style={[styles.listCount, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+        <Text style={[styles.listCount, { color: colors.textTertiary, fontFamily: 'Poppins_400Regular' }]}>
           {sites.length}
         </Text>
       </View>
@@ -163,7 +163,7 @@ export default function DashboardScreen() {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <MaterialCommunityIcons name="office-building-outline" size={64} color={colors.textTertiary} />
-            <Text style={[styles.emptyText, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
+            <Text style={[styles.emptyText, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>
               {t('noSitesYet')}
             </Text>
           </View>

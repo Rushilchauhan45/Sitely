@@ -5,18 +5,20 @@ import { useApp } from '@/lib/AppContext';
 import { useThemeColors } from '@/constants/colors';
 
 export default function IndexScreen() {
-  const { isReady, onboardingDone } = useApp();
+  const { isReady, onboardingDone, user } = useApp();
   const colorScheme = useColorScheme();
   const colors = useThemeColors(colorScheme);
 
   useEffect(() => {
     if (!isReady) return;
-    if (onboardingDone) {
-      router.replace('/dashboard');
-    } else {
+    if (!user) {
+      router.replace('/auth');
+    } else if (!onboardingDone) {
       router.replace('/onboarding');
+    } else {
+      router.replace('/dashboard');
     }
-  }, [isReady, onboardingDone]);
+  }, [isReady, onboardingDone, user]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>

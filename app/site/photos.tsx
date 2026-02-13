@@ -53,16 +53,16 @@ export default function PhotosScreen() {
       <View style={styles.photoInfo}>
         <View style={styles.photoDateRow}>
           <Ionicons name="calendar-outline" size={14} color={colors.textTertiary} />
-          <Text style={[styles.photoDate, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
+          <Text style={[styles.photoDate, { color: colors.textSecondary, fontFamily: 'Poppins_400Regular' }]}>
             {item.date}
           </Text>
           <Ionicons name="time-outline" size={14} color={colors.textTertiary} />
-          <Text style={[styles.photoDate, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
+          <Text style={[styles.photoDate, { color: colors.textSecondary, fontFamily: 'Poppins_400Regular' }]}>
             {item.time}
           </Text>
         </View>
         {item.description ? (
-          <Text style={[styles.photoDesc, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>
+          <Text style={[styles.photoDesc, { color: colors.text, fontFamily: 'Poppins_400Regular' }]}>
             {item.description}
           </Text>
         ) : null}
@@ -76,7 +76,7 @@ export default function PhotosScreen() {
         <Pressable onPress={() => router.back()} hitSlop={16}>
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
+        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Poppins_600SemiBold' }]}>
           {t('sitePhotos')}
         </Text>
         <Pressable onPress={handleAddPhoto} hitSlop={16}>
@@ -93,7 +93,7 @@ export default function PhotosScreen() {
         ListEmptyComponent={
           <View style={styles.empty}>
             <Ionicons name="images-outline" size={56} color={colors.textTertiary} />
-            <Text style={[styles.emptyText, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
+            <Text style={[styles.emptyText, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>
               {t('noPhotos')}
             </Text>
           </View>

@@ -30,21 +30,21 @@ export default function PaymentHistoryScreen() {
 
   const renderPayment = ({ item, index }: { item: PaymentRecord; index: number }) => (
     <View style={[styles.row, { backgroundColor: index % 2 === 0 ? colors.surface : colors.background, borderBottomColor: colors.borderLight }]}>
-      <Text style={[styles.cell, styles.numCell, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{index + 1}</Text>
+      <Text style={[styles.cell, styles.numCell, { color: colors.textTertiary, fontFamily: 'Poppins_400Regular' }]}>{index + 1}</Text>
       <View style={[styles.nameCell]}>
-        <Text style={[styles.cellText, { color: colors.text, fontFamily: 'Inter_500Medium' }]} numberOfLines={1}>{item.workerName}</Text>
+        <Text style={[styles.cellText, { color: colors.text, fontFamily: 'Poppins_500Medium' }]} numberOfLines={1}>{item.workerName}</Text>
         <View style={[styles.catBadge, { backgroundColor: item.workerCategory === 'karigar' ? '#7C3AED20' : '#E8840C20' }]}>
-          <Text style={[styles.catText, { color: item.workerCategory === 'karigar' ? '#7C3AED' : '#E8840C', fontFamily: 'Inter_500Medium' }]}>
+          <Text style={[styles.catText, { color: item.workerCategory === 'karigar' ? '#7C3AED' : '#E8840C', fontFamily: 'Poppins_500Medium' }]}>
             {t(item.workerCategory)}
           </Text>
         </View>
       </View>
-      <Text style={[styles.cell, styles.amountCell, { color: colors.success, fontFamily: 'Inter_600SemiBold' }]}>
+      <Text style={[styles.cell, styles.amountCell, { color: colors.success, fontFamily: 'Poppins_600SemiBold' }]}>
         {formatCurrency(item.amount)}
       </Text>
       <View style={styles.dateCell}>
-        <Text style={[styles.dateText, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>{item.date}</Text>
-        <Text style={[styles.timeText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{item.time}</Text>
+        <Text style={[styles.dateText, { color: colors.textSecondary, fontFamily: 'Poppins_400Regular' }]}>{item.date}</Text>
+        <Text style={[styles.timeText, { color: colors.textTertiary, fontFamily: 'Poppins_400Regular' }]}>{item.time}</Text>
       </View>
     </View>
   );
@@ -57,7 +57,7 @@ export default function PaymentHistoryScreen() {
         <Pressable onPress={() => router.back()} hitSlop={16}>
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
+        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Poppins_600SemiBold' }]}>
           {t('paymentHistory')}
         </Text>
         <View style={{ width: 24 }} />
@@ -65,17 +65,17 @@ export default function PaymentHistoryScreen() {
 
       {payments.length > 0 && (
         <View style={[styles.summaryCard, { backgroundColor: colors.surface, borderColor: colors.borderLight }]}>
-          <Text style={[styles.summaryLabel, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>{t('totalPaid')}</Text>
-          <Text style={[styles.summaryValue, { color: colors.success, fontFamily: 'Inter_700Bold' }]}>{formatCurrency(totalPaid)}</Text>
+          <Text style={[styles.summaryLabel, { color: colors.textSecondary, fontFamily: 'Poppins_400Regular' }]}>{t('totalPaid')}</Text>
+          <Text style={[styles.summaryValue, { color: colors.success, fontFamily: 'Poppins_700Bold' }]}>{formatCurrency(totalPaid)}</Text>
         </View>
       )}
 
       {payments.length > 0 && (
         <View style={[styles.tableHeader, { backgroundColor: colors.surfaceElevated, borderBottomColor: colors.border }]}>
-          <Text style={[styles.cell, styles.numCell, styles.thText, { color: colors.textTertiary, fontFamily: 'Inter_600SemiBold' }]}>{t('number')}</Text>
-          <Text style={[styles.cell, { flex: 1 }, styles.thText, { color: colors.textTertiary, fontFamily: 'Inter_600SemiBold' }]}>{t('workerName')}</Text>
-          <Text style={[styles.cell, styles.amountCell, styles.thText, { color: colors.textTertiary, fontFamily: 'Inter_600SemiBold' }]}>{t('amount')}</Text>
-          <Text style={[styles.cell, styles.thText, { width: 80, color: colors.textTertiary, fontFamily: 'Inter_600SemiBold' }]}>{t('date')}</Text>
+          <Text style={[styles.cell, styles.numCell, styles.thText, { color: colors.textTertiary, fontFamily: 'Poppins_600SemiBold' }]}>{t('number')}</Text>
+          <Text style={[styles.cell, { flex: 1 }, styles.thText, { color: colors.textTertiary, fontFamily: 'Poppins_600SemiBold' }]}>{t('workerName')}</Text>
+          <Text style={[styles.cell, styles.amountCell, styles.thText, { color: colors.textTertiary, fontFamily: 'Poppins_600SemiBold' }]}>{t('amount')}</Text>
+          <Text style={[styles.cell, styles.thText, { width: 80, color: colors.textTertiary, fontFamily: 'Poppins_600SemiBold' }]}>{t('date')}</Text>
         </View>
       )}
 
@@ -88,7 +88,7 @@ export default function PaymentHistoryScreen() {
         ListEmptyComponent={
           <View style={styles.empty}>
             <Ionicons name="time-outline" size={56} color={colors.textTertiary} />
-            <Text style={[styles.emptyText, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
+            <Text style={[styles.emptyText, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>
               {t('noPaymentHistory')}
             </Text>
           </View>

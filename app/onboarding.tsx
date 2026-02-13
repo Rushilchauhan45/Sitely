@@ -73,10 +73,10 @@ export default function OnboardingScreen() {
           <MaterialCommunityIcons name={item.icon as any} size={64} color="#FFF" />
         )}
       </LinearGradient>
-      <Text style={[styles.slideTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
+      <Text style={[styles.slideTitle, { color: colors.text, fontFamily: 'Poppins_700Bold' }]}>
         {t(item.titleKey)}
       </Text>
-      <Text style={[styles.slideDesc, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
+      <Text style={[styles.slideDesc, { color: colors.textSecondary, fontFamily: 'Poppins_400Regular' }]}>
         {t(item.descKey)}
       </Text>
     </View>
@@ -89,7 +89,7 @@ export default function OnboardingScreen() {
           <View style={[styles.langIconCircle, { backgroundColor: colors.primaryLight }]}>
             <Ionicons name="language" size={48} color={colors.primary} />
           </View>
-          <Text style={[styles.langTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
+          <Text style={[styles.langTitle, { color: colors.text, fontFamily: 'Poppins_700Bold' }]}>
             {t('selectLanguage')}
           </Text>
           {languages.map((lang) => (
@@ -106,10 +106,10 @@ export default function OnboardingScreen() {
               ]}
               onPress={() => handleLangSelect(lang.code)}
             >
-              <Text style={[styles.langText, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
+              <Text style={[styles.langText, { color: colors.text, fontFamily: 'Poppins_600SemiBold' }]}>
                 {lang.native}
               </Text>
-              <Text style={[styles.langSubtext, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
+              <Text style={[styles.langSubtext, { color: colors.textSecondary, fontFamily: 'Poppins_400Regular' }]}>
                 {lang.label}
               </Text>
               {language === lang.code && (
@@ -126,7 +126,7 @@ export default function OnboardingScreen() {
     <View style={[styles.container, { backgroundColor: colors.background, paddingTop: insets.top + webTopInset, paddingBottom: insets.bottom + webBottomInset }]}>
       <View style={styles.skipRow}>
         <Pressable onPress={() => setShowLangPicker(true)} hitSlop={16}>
-          <Text style={[styles.skipText, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
+          <Text style={[styles.skipText, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>
             {t('skip')}
           </Text>
         </Pressable>

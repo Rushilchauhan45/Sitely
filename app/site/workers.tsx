@@ -48,28 +48,28 @@ export default function WorkersScreen() {
         <Image source={{ uri: item.photoUri }} style={styles.workerPhoto} contentFit="cover" />
       ) : (
         <View style={[styles.avatar, { backgroundColor: colors.primary + '20' }]}>
-          <Text style={[styles.avatarText, { color: colors.primary, fontFamily: 'Inter_700Bold' }]}>
+          <Text style={[styles.avatarText, { color: colors.primary, fontFamily: 'Poppins_700Bold' }]}>
             {getInitials(item.name)}
           </Text>
         </View>
       )}
       <View style={styles.workerInfo}>
-        <Text style={[styles.workerName, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>{item.name}</Text>
+        <Text style={[styles.workerName, { color: colors.text, fontFamily: 'Poppins_600SemiBold' }]}>{item.name}</Text>
         <View style={styles.workerMeta}>
           <View style={[styles.catBadge, { backgroundColor: item.category === 'karigar' ? '#7C3AED20' : '#E8840C20' }]}>
-            <Text style={[styles.catText, { color: item.category === 'karigar' ? '#7C3AED' : '#E8840C', fontFamily: 'Inter_500Medium' }]}>
+            <Text style={[styles.catText, { color: item.category === 'karigar' ? '#7C3AED' : '#E8840C', fontFamily: 'Poppins_500Medium' }]}>
               {t(item.category)}
             </Text>
           </View>
           {item.village ? (
-            <Text style={[styles.villageText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+            <Text style={[styles.villageText, { color: colors.textTertiary, fontFamily: 'Poppins_400Regular' }]}>
               {item.village}
             </Text>
           ) : null}
         </View>
       </View>
       {item.contact ? (
-        <Text style={[styles.contactText, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
+        <Text style={[styles.contactText, { color: colors.textSecondary, fontFamily: 'Poppins_400Regular' }]}>
           {item.contact}
         </Text>
       ) : null}
@@ -82,7 +82,7 @@ export default function WorkersScreen() {
         <Pressable onPress={() => router.back()} hitSlop={16}>
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
+        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Poppins_600SemiBold' }]}>
           {t('allWorkers')} ({workers.length})
         </Text>
         <View style={{ width: 24 }} />
@@ -96,7 +96,7 @@ export default function WorkersScreen() {
         ListEmptyComponent={
           <View style={styles.empty}>
             <Ionicons name="people-outline" size={56} color={colors.textTertiary} />
-            <Text style={[styles.emptyText, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
+            <Text style={[styles.emptyText, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>
               {t('noWorkers')}
             </Text>
           </View>
