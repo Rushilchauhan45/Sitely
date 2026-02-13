@@ -1,0 +1,201 @@
+You are a senior Flutter architect and Firebase expert.
+
+Build a complete production-ready Android mobile application using Flutter + Firebase + Local SQLite database.
+
+Project Name: Site Expense Tracker Pro
+
+Purpose:
+A construction site management application for site heads to manage workers, daily attendance (hajari), expenses, payments, and 3-year history tracking.
+
+Architecture Requirements:
+- Clean architecture
+- Feature-based folder structure
+- Riverpod for state management
+- Firebase Authentication
+- SQLite for local storage
+- Offline-first approach
+- Smooth animations
+- Material 3 modern UI
+- Responsive layout
+- Optimized performance
+- Proper error handling
+
+-----------------------------------
+AUTHENTICATION MODULE
+-----------------------------------
+
+Roles:
+1. Admin (hardcoded constant credentials)
+2. User (Construction Site Head)
+
+User Authentication must include:
+- Email + Password Signup/Login
+- Google Sign-In
+- Phone OTP Login
+- Forgot Password via OTP
+- Change Username via OTP
+- Optional profile photo upload
+- If no photo uploaded → generate circular avatar with first letters of name
+
+-----------------------------------
+ONBOARDING
+-----------------------------------
+
+- 3-4 smooth slider screens
+- Android permission explanation
+- Language selection (Gujarati, Hindi, English)
+- After language selection entire app text must change
+- Save selected language locally
+- Show onboarding only first time
+
+-----------------------------------
+DASHBOARD
+-----------------------------------
+
+Greeting message: "Welcome to your Site Expense Tracker"
+
+Options:
+- Create New Site
+- View Existing Sites
+
+Users can create unlimited sites.
+
+-----------------------------------
+SITE CREATION
+-----------------------------------
+
+Fields:
+- Site Name
+- Site Type (Residential, Commercial, Row House, Tenament, Shop, Other)
+- Site Location
+- Start Date
+- End Date (or Running checkbox)
+- Organization / Owner Name
+- Contact Details (required)
+
+After creation → Open Site Home
+
+-----------------------------------
+SITE HOME
+-----------------------------------
+
+Sections:
+1. Add Workers
+2. Add Daily Hajari
+3. Add Expense
+4. Pay to Worker
+5. Site Payment History
+6. Site Photos
+7. Reports & Download
+
+-----------------------------------
+WORKER MODULE
+-----------------------------------
+
+Fields:
+- Photo
+- Name
+- Age
+- Contact
+- Town/Village
+- Category (Karigar / Majdur)
+- Auto joining date (device date)
+
+-----------------------------------
+HAJARI MODULE
+-----------------------------------
+
+- Multi-select workers
+- Select All option
+- Individual amount entry allowed
+- Auto save date & time from device
+- Category visible beside name
+
+-----------------------------------
+EXPENSE MODULE
+-----------------------------------
+
+Same structure as Hajari
+Auto timestamp
+Category visible
+
+-----------------------------------
+PAYMENT MODULE
+-----------------------------------
+
+When selecting worker:
+Calculate:
+
+Total Hajari - Total Expense - Already Paid
+
+Show:
+- Total Hajari
+- Total Expense
+- Paid
+- Remaining
+
+Allow entering payment amount
+Save payment history
+
+Payment History Table Columns:
+- Number
+- Worker Name
+- Category
+- Total Hajari
+- Paid
+- Remaining
+- Date & Time
+
+Allow Download History (PDF + CSV)
+
+-----------------------------------
+SITE PHOTOS MODULE
+-----------------------------------
+
+- Upload images
+- Add description
+- Save device timestamp
+- Show in timeline format
+- Store locally
+
+-----------------------------------
+DATA STORAGE
+-----------------------------------
+
+- SQLite for all site, worker, hajari, expense, payment records
+- Local image storage
+- Auto delete records older than 3 years
+- Offline fully functional after login
+
+-----------------------------------
+UI REQUIREMENTS
+-----------------------------------
+
+- Modern Material 3 design
+- Smooth animations
+- Soft shadows
+- Clean typography
+- Proper spacing
+- Card-based layout
+- Floating action buttons
+- Bottom navigation if needed
+- Dark & Light theme support
+- Fast performance
+- No UI lag
+
+-----------------------------------
+DELIVERABLES
+-----------------------------------
+
+1. Complete Flutter project structure
+2. All necessary dependencies
+3. Database schema
+4. Firebase setup guide
+5. Step-by-step APK build instructions
+6. Clean and well-commented code
+
+Ensure:
+- No placeholder logic
+- No mock data
+- Fully working logic
+- Production-ready code
