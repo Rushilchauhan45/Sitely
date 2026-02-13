@@ -1,0 +1,121 @@
+You are a senior Flutter UI/UX architect.
+
+Refactor and upgrade my existing Flutter project into a premium, production-ready application with proper authentication flow and professional UI animations.
+
+-----------------------------------
+CRITICAL FLOW FIX
+-----------------------------------
+
+1. Authentication MUST come first.
+   - Show Login / Signup screen before onboarding sliders.
+   - After successful login → if first-time user → show onboarding sliders.
+   - If not first time → directly open dashboard.
+
+2. Fix current issue where sliders are appearing before authentication.
+
+-----------------------------------
+PREMIUM UI REQUIREMENTS
+-----------------------------------
+
+Upgrade entire UI to look like a modern premium fintech-style application.
+
+Use:
+- Material 3 design
+- Smooth transitions
+- Hero animations
+- Fade + Slide animations
+- Animated buttons (scale effect on tap)
+- Smooth page transitions
+- Card-based layouts with elevation
+- Soft shadows
+- Proper spacing
+- Rounded corners (16-20 radius)
+- Glassmorphism where suitable (subtle, not heavy)
+- No basic default Flutter buttons
+
+All buttons must:
+- Have ripple animation
+- Slight scale down on press
+- Gradient background where appropriate
+- Smooth hover/press effect
+
+-----------------------------------
+FONTS
+-----------------------------------
+
+Use premium modern fonts:
+- Poppins or Inter
+- Proper font weights hierarchy
+- Large bold headings
+- Clean body text
+- Consistent typography system
+
+-----------------------------------
+DASHBOARD IMPROVEMENT
+-----------------------------------
+
+At top left:
+- Circular user profile icon
+- Next to it show user's name
+
+On tapping profile icon:
+Open a bottom sheet or profile page containing:
+- Edit profile
+- Change language (Gujarati / Hindi / English)
+- Logout option
+
+Language change must update entire app instantly.
+
+-----------------------------------
+CREATE SITE PAGE UI UPGRADE
+-----------------------------------
+
+Redesign Create Site screen:
+- Modern input fields
+- Floating labels
+- Smooth focus animation
+- Date picker with modern style
+- Toggle switch for "Running"
+- Proper spacing
+- Gradient primary action button
+
+Add subtle entry animations when screen loads.
+
+-----------------------------------
+ANIMATION STANDARDS
+-----------------------------------
+
+- Use AnimatedContainer where appropriate
+- Use PageRouteBuilder for smooth transitions
+- Avoid lag
+- Maintain 60fps smoothness
+- Optimize rebuilds
+
+-----------------------------------
+STRUCTURE REQUIREMENTS
+-----------------------------------
+
+- Clean architecture
+- Separate UI, logic and state
+- Use Riverpod for state management
+- Keep reusable widgets in common folder
+- Create custom animated button widget
+- Create reusable text field widget
+
+-----------------------------------
+IMPORTANT
+-----------------------------------
+
+Do not rewrite entire logic.
+Refactor existing project properly.
+Fix broken parts.
+Keep database and logic intact.
+Focus on flow correction and premium UI upgrade.
+
+Deliver:
+1. Updated folder structure
+2. Modified main.dart navigation logic
+3. Updated authentication flow
+4. Premium UI components code
+5. Reusable animated button component
+6. Theme configuration with premium typography

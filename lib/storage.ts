@@ -11,6 +11,7 @@ const KEYS = {
   EXPENSES: '@expenses',
   PAYMENTS: '@payments',
   PHOTOS: '@photos',
+  AUTH_USER: '@auth_user',
 };
 
 function generateId(): string {
@@ -26,6 +27,63 @@ function threeYearsAgo(): number {
 function cleanOldRecords<T extends { date: string }>(records: T[]): T[] {
   const cutoff = threeYearsAgo();
   return records.filter(r => new Date(r.date).getTime() > cutoff);
+}
+
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  photoUri: string | null;
+}
+
+export async function getAuthUser(): Promise<AuthUser | null> {
+  const data = await AsyncStorage.getItem(KEYS.AUTH_USER);
+  return data ? JSON.parse(data) : null;
+}
+
+export async function saveAuthUser(user: AuthUser): Promise<void> {
+  await AsyncStorage.setItem(KEYS.AUTH_USER, JSON.stringify(user));
+}
+
+export async function updateAuthUser(updates: Partial<AuthUser>): Promise<AuthUser | null> {
+  const user = await getAuthUser();
+  if (!user) return null;
+  const updated = { ...user, ...updates };
+  await saveAuthUser(updated);
+  return updated;
+}
+
+export async function logoutUser(): Promise<void> {
+  await AsyncStorage.removeItem(KEYS.AUTH_USER);
+}
+
+export async function signUp(name: string, email: string, password: string): Promise<AuthUser> {
+  const usersRaw = await AsyncStorage.getItem('@all_users');
+  const users: (AuthUser & { password: string })[] = usersRaw ? JSON.parse(usersRaw) : [];
+  const existing = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+  if (existing) throw new Error('Account already exists with this email');
+  const newUser: AuthUser & { password: string } = {
+    id: generateId(),
+    name,
+    email: email.toLowerCase(),
+    photoUri: null,
+    password,
+  };
+  users.push(newUser);
+  await AsyncStorage.setItem('@all_users', JSON.stringify(users));
+  const authUser: AuthUser = { id: newUser.id, name: newUser.name, email: newUser.email, photoUri: null };
+  await saveAuthUser(authUser);
+  return authUser;
+}
+
+export async function signIn(email: string, password: string): Promise<AuthUser> {
+  const usersRaw = await AsyncStorage.getItem('@all_users');
+  const users: (AuthUser & { password: string })[] = usersRaw ? JSON.parse(usersRaw) : [];
+  const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+  if (!user) throw new Error('Invalid email or password');
+  const authUser: AuthUser = { id: user.id, name: user.name, email: user.email, photoUri: user.photoUri };
+  await saveAuthUser(authUser);
+  return authUser;
 }
 
 export async function getLanguage(): Promise<Language> {
