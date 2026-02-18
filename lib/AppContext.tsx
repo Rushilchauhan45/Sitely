@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
 import { Language, t } from './i18n';
 import * as store from './storage';
-import { AuthUser } from './storage';
+import { getSession, type AuthUser } from './auth';
 
 interface AppContextValue {
   language: Language;
@@ -9,6 +9,7 @@ interface AppContextValue {
   t: (key: string) => string;
   onboardingDone: boolean;
   completeOnboarding: () => Promise<void>;
+  resetOnboarding: () => Promise<void>;
   isReady: boolean;
   user: AuthUser | null;
   setUser: (user: AuthUser | null) => void;
@@ -24,9 +25,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     (async () => {
+      // Initialise SQLite DB + run one-time AsyncStorage migration
+      await store.initDatabase();
       const lang = await store.getLanguage();
       const done = await store.isOnboardingDone();
-      const authUser = await store.getAuthUser();
+      // Use secure session storage from auth service
+      const authUser = await getSession();
       setLang(lang);
       setOnboardingDone(done);
       setUser(authUser);
@@ -44,6 +48,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     await store.setOnboardingDone();
   };
 
+  const resetOnboarding = async () => {
+    setOnboardingDone(false);
+    await store.resetOnboardingDone();
+  };
+
   const translate = (key: string) => t(language, key);
 
   const value = useMemo(() => ({
@@ -52,6 +61,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     t: translate,
     onboardingDone,
     completeOnboarding,
+    resetOnboarding,
     isReady,
     user,
     setUser,

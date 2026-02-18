@@ -3,6 +3,12 @@
   "compilerOptions": {
     "baseUrl": ".",
     "strict": true,
+    "jsx": "react-native",
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
     "paths": {
       "@/*": [
         "./*"

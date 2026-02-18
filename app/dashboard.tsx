@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable, FlatList, useColorScheme, Platform, Alert, Modal, Animated, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Pressable, FlatList, useColorScheme, Platform, Alert, Modal, Animated, Dimensions, BackHandler, TextInput, Image } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -9,7 +9,13 @@ import { useThemeColors } from '@/constants/colors';
 import { Site } from '@/lib/types';
 import { Language } from '@/lib/i18n';
 import * as store from '@/lib/storage';
+import { AnimatedPressable, EmptyState } from '@/components/ui';
+import { shadow } from '@/constants/shadows';
 import * as Haptics from 'expo-haptics';
+import * as ImagePicker from 'expo-image-picker';
+import { getUnreadCount } from './notifications';
+import ProfilePrompt from '@/components/ProfilePrompt';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { height: screenHeight } = Dimensions.get('window');
 
@@ -28,22 +34,43 @@ export default function DashboardScreen() {
   const [loading, setLoading] = useState(true);
   const [showProfile, setShowProfile] = useState(false);
   const [showLangPicker, setShowLangPicker] = useState(false);
+  const [showEditProfile, setShowEditProfile] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editPhoto, setEditPhoto] = useState<string | null>(null);
+  const [editPhone, setEditPhone] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [showProfilePrompt, setShowProfilePrompt] = useState(false);
   const webTopInset = Platform.OS === 'web' ? 67 : 0;
   const webBottomInset = Platform.OS === 'web' ? 34 : 0;
 
   const sheetAnim = useRef(new Animated.Value(0)).current;
   const backdropAnim = useRef(new Animated.Value(0)).current;
 
+  // Block hardware back from dashboard — this is the home screen
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => true);
+    return () => backHandler.remove();
+  }, []);
+
   useFocusEffect(
     useCallback(() => {
       loadSites();
+      getUnreadCount().then(setUnreadCount);
+      // Check if should show profile prompt (first 3 logins without profile photo)
+      AsyncStorage.getItem('@profile_prompt_count').then(val => {
+        const count = parseInt(val || '0', 10);
+        if (count < 3 && !user?.photoUri) {
+          setShowProfilePrompt(true);
+        }
+      });
     }, [])
   );
 
   const loadSites = async () => {
     setLoading(true);
-    const data = await store.getSites();
-    setSites(data.reverse());
+    const data = await store.getSites(user?.id);
+    setSites(data);
     setLoading(false);
   };
 
@@ -63,25 +90,41 @@ export default function DashboardScreen() {
     ]).start(() => {
       setShowProfile(false);
       setShowLangPicker(false);
+      setShowEditProfile(false);
     });
   };
 
   const handleLogout = () => {
     closeSheet();
-    setTimeout(() => {
-      Alert.alert(t('logout'), t('logoutConfirm'), [
-        { text: t('cancel'), style: 'cancel' },
-        {
-          text: t('logout'),
-          style: 'destructive',
-          onPress: async () => {
-            await store.logoutUser();
-            setUser(null);
-            router.replace('/auth');
-          },
-        },
-      ]);
-    }, 300);
+
+    const doLogout = async () => {
+      try {
+        await store.logout();
+      } catch (e) {
+        console.warn('Logout error:', e);
+      }
+      // Reset onboarding so sliders show again on next login
+      try {
+        await store.resetOnboardingDone();
+      } catch (_) {}
+      setUser(null);
+      router.replace('/auth');
+    };
+
+    if (Platform.OS === 'web') {
+      setTimeout(() => {
+        if (confirm(t('logoutConfirm'))) {
+          doLogout();
+        }
+      }, 300);
+    } else {
+      setTimeout(() => {
+        Alert.alert(t('logout'), t('logoutConfirm'), [
+          { text: t('cancel'), style: 'cancel' },
+          { text: t('logout'), style: 'destructive', onPress: doLogout },
+        ]);
+      }, 300);
+    }
   };
 
   const handleLangChange = async (lang: Language) => {
@@ -90,23 +133,72 @@ export default function DashboardScreen() {
     setShowLangPicker(false);
   };
 
+  const handleEditProfile = () => {
+    setEditName(user?.name || '');
+    setEditPhoto(user?.photoUri || null);
+    setEditPhone(user?.phone || '');
+    setShowEditProfile(true);
+  };
+
+  const handlePickPhoto = async () => {
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('', 'Permission to access gallery is required');
+        return;
+      }
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.7,
+      });
+      if (!result.canceled && result.assets[0]?.uri) {
+        setEditPhoto(result.assets[0].uri);
+      }
+    } catch (e) {
+      console.warn('Image picker error:', e);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    const trimmed = editName.trim();
+    if (!trimmed) return;
+    setSaving(true);
+    try {
+      const updated = await store.updateUserProfile({ name: trimmed, photoUri: editPhoto, phone: editPhone.trim() || null });
+      if (updated) setUser(updated);
+      setShowEditProfile(false);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (e) {
+      Alert.alert(t('authError'), String(e));
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleDeleteSite = (site: Site) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    Alert.alert(
-      t('delete'),
-      `${site.name}?`,
-      [
-        { text: t('cancel'), style: 'cancel' },
-        {
-          text: t('delete'),
-          style: 'destructive',
-          onPress: async () => {
-            await store.deleteSite(site.id);
-            loadSites();
-          },
-        },
-      ]
-    );
+
+    const doDelete = async () => {
+      await store.deleteSite(site.id);
+      loadSites();
+    };
+
+    if (Platform.OS === 'web') {
+      if (confirm(`${t('delete')} ${site.name}?`)) {
+        doDelete();
+      }
+    } else {
+      Alert.alert(
+        t('delete'),
+        `${site.name}?`,
+        [
+          { text: t('cancel'), style: 'cancel' },
+          { text: t('delete'), style: 'destructive', onPress: doDelete },
+        ]
+      );
+    }
   };
 
   const siteTypeIcons: Record<string, string> = {
@@ -121,25 +213,24 @@ export default function DashboardScreen() {
   const getInitials = (name: string) => name?.trim().split(' ').map(p => p[0]?.toUpperCase() || '').slice(0, 2).join('') || '?';
 
   const renderSite = ({ item }: { item: Site }) => (
-    <Pressable
-      style={({ pressed }) => [
+    <AnimatedPressable
+      scaleValue={0.97}
+      style={[
         styles.siteCard,
         {
           backgroundColor: colors.surface,
           borderColor: colors.borderLight,
-          opacity: pressed ? 0.9 : 1,
-          transform: [{ scale: pressed ? 0.98 : 1 }],
+          ...shadow({ color: colors.cardShadow, offsetY: 4, opacity: 0.1, radius: 14, elevation: 3 }),
         },
       ]}
       onPress={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         router.push({ pathname: '/site/[id]', params: { id: item.id } });
       }}
       onLongPress={() => handleDeleteSite(item)}
     >
       <View style={styles.siteCardHeader}>
         <LinearGradient
-          colors={['#1B4332', '#2D6A4F']}
+          colors={['#0EA5E9', '#38BDF8']}
           style={styles.siteIconBg}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -153,6 +244,11 @@ export default function DashboardScreen() {
           <Text style={[styles.siteCardLocation, { color: colors.textSecondary, fontFamily: 'Poppins_400Regular' }]} numberOfLines={1}>
             {item.location}
           </Text>
+          {item.siteCode ? (
+            <Text style={{ color: colors.primary, fontSize: 11, fontFamily: 'Poppins_600SemiBold', marginTop: 2 }}>
+              {item.siteCode}
+            </Text>
+          ) : null}
         </View>
         <View style={[styles.statusBadge, { backgroundColor: item.isRunning ? colors.success + '20' : colors.textTertiary + '20' }]}>
           <View style={[styles.statusDot, { backgroundColor: item.isRunning ? colors.success : colors.textTertiary }]} />
@@ -175,7 +271,7 @@ export default function DashboardScreen() {
           </Text>
         </View>
       </View>
-    </Pressable>
+    </AnimatedPressable>
   );
 
   const sheetTranslateY = sheetAnim.interpolate({
@@ -186,18 +282,22 @@ export default function DashboardScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <LinearGradient
-        colors={colorScheme === 'dark' ? ['#0D2818', '#0D1117'] : ['#1B4332', '#2D6A4F']}
+        colors={['#0EA5E9', '#0284C7', '#1A1A2E']}
         style={[styles.header, { paddingTop: insets.top + webTopInset + 16 }]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
         <View style={styles.profileRow}>
           <Pressable onPress={openSheet} style={({ pressed }) => [styles.profileBtn, { opacity: pressed ? 0.8 : 1 }]}>
-            <View style={styles.avatarCircle}>
-              <Text style={[styles.avatarText, { fontFamily: 'Poppins_700Bold' }]}>
-                {getInitials(user?.name || '')}
-              </Text>
-            </View>
+            {user?.photoUri ? (
+              <Image source={{ uri: user.photoUri }} style={styles.avatarImage} />
+            ) : (
+              <View style={styles.avatarCircle}>
+                <Text style={[styles.avatarText, { fontFamily: 'Poppins_700Bold' }]}>
+                  {getInitials(user?.name || '')}
+                </Text>
+              </View>
+            )}
             <View>
               <Text style={[styles.greetingSmall, { fontFamily: 'Poppins_400Regular' }]}>
                 {t('hello')},
@@ -207,26 +307,30 @@ export default function DashboardScreen() {
               </Text>
             </View>
           </Pressable>
-          <View style={styles.headerBadge}>
-            <Ionicons name="construct" size={20} color="rgba(255,255,255,0.6)" />
-          </View>
+          <Pressable
+            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/notifications' as any); }}
+            style={styles.headerBadge}
+          >
+            <Ionicons name="notifications" size={20} color="rgba(255,255,255,0.8)" />
+            {unreadCount > 0 && (
+              <View style={styles.notifBadge}>
+                <Text style={styles.notifBadgeText}>{unreadCount > 9 ? '9+' : unreadCount}</Text>
+              </View>
+            )}
+          </Pressable>
         </View>
 
-        <Pressable
-          style={({ pressed }) => [
-            styles.createBtn,
-            { opacity: pressed ? 0.9 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] },
-          ]}
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            router.push('/create-site');
-          }}
+        <AnimatedPressable
+          scaleValue={0.97}
+          haptic={Haptics.ImpactFeedbackStyle.Medium}
+          style={styles.createBtn}
+          onPress={() => router.push('/create-site')}
         >
-          <Ionicons name="add-circle" size={22} color="#1B4332" />
+          <Ionicons name="add-circle" size={22} color="#0EA5E9" />
           <Text style={[styles.createBtnText, { fontFamily: 'Poppins_600SemiBold' }]}>
             {t('createNewSite')}
           </Text>
-        </Pressable>
+        </AnimatedPressable>
       </LinearGradient>
 
       <View style={styles.listHeader}>
@@ -244,17 +348,58 @@ export default function DashboardScreen() {
         data={sites}
         renderItem={renderSite}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + webBottomInset + 20 }]}
+        contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + webBottomInset + 80 }]}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <MaterialCommunityIcons name="office-building-outline" size={64} color={colors.textTertiary} />
-            <Text style={[styles.emptyText, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>
-              {t('noSitesYet')}
-            </Text>
-          </View>
+          <EmptyState icon="office-building-outline" iconSet="material" title={t('noSitesYet')} />
         }
       />
+
+      {/* Floating Todo Button */}
+      <Pressable
+        style={({ pressed }) => [
+          styles.helpFab,
+          {
+            bottom: insets.bottom + webBottomInset + 90,
+            opacity: pressed ? 0.85 : 1,
+            transform: [{ scale: pressed ? 0.92 : 1 }],
+            ...shadow({ offsetY: 6, opacity: 0.25, radius: 16, elevation: 8 }),
+          },
+        ]}
+        onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/todo' as any); }}
+      >
+        <LinearGradient
+          colors={['#0EA5E9', '#38BDF8']}
+          style={styles.helpFabGradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <Ionicons name="checkbox-outline" size={26} color="#FFF" />
+        </LinearGradient>
+      </Pressable>
+
+      {/* Floating Help Button */}
+      <Pressable
+        style={({ pressed }) => [
+          styles.helpFab,
+          {
+            bottom: insets.bottom + webBottomInset + 20,
+            opacity: pressed ? 0.85 : 1,
+            transform: [{ scale: pressed ? 0.92 : 1 }],
+            ...shadow({ offsetY: 6, opacity: 0.25, radius: 16, elevation: 8 }),
+          },
+        ]}
+        onPress={() => router.push('/help')}
+      >
+        <LinearGradient
+          colors={['#0EA5E9', '#38BDF8']}
+          style={styles.helpFabGradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <Ionicons name="help-circle" size={28} color="#FFF" />
+        </LinearGradient>
+      </Pressable>
 
       <Modal visible={showProfile} transparent animationType="none" onRequestClose={closeSheet}>
         <View style={styles.modalContainer}>
@@ -264,14 +409,18 @@ export default function DashboardScreen() {
           <Animated.View style={[styles.bottomSheet, { backgroundColor: colors.surface, paddingBottom: insets.bottom + webBottomInset + 20, transform: [{ translateY: sheetTranslateY }] }]}>
             <View style={[styles.sheetHandle, { backgroundColor: colors.border }]} />
 
-            {!showLangPicker ? (
+            {!showLangPicker && !showEditProfile ? (
               <>
                 <View style={styles.sheetProfile}>
-                  <View style={[styles.sheetAvatar, { backgroundColor: colors.primary }]}>
-                    <Text style={[styles.sheetAvatarText, { fontFamily: 'Poppins_700Bold' }]}>
-                      {getInitials(user?.name || '')}
-                    </Text>
-                  </View>
+                  {user?.photoUri ? (
+                    <Image source={{ uri: user.photoUri }} style={styles.sheetAvatarImage} />
+                  ) : (
+                    <View style={[styles.sheetAvatar, { backgroundColor: colors.primary }]}>
+                      <Text style={[styles.sheetAvatarText, { fontFamily: 'Poppins_700Bold' }]}>
+                        {getInitials(user?.name || '')}
+                      </Text>
+                    </View>
+                  )}
                   <Text style={[styles.sheetName, { color: colors.text, fontFamily: 'Poppins_600SemiBold' }]}>
                     {user?.name}
                   </Text>
@@ -281,6 +430,32 @@ export default function DashboardScreen() {
                 </View>
 
                 <View style={[styles.sheetDivider, { backgroundColor: colors.borderLight }]} />
+
+                <Pressable
+                  style={({ pressed }) => [styles.sheetOption, { backgroundColor: pressed ? colors.inputBg : 'transparent' }]}
+                  onPress={handleEditProfile}
+                >
+                  <View style={[styles.sheetOptionIcon, { backgroundColor: '#2196F320' }]}>
+                    <Ionicons name="person-outline" size={20} color="#2196F3" />
+                  </View>
+                  <Text style={[styles.sheetOptionText, { color: colors.text, fontFamily: 'Poppins_500Medium' }]}>
+                    {t('editProfile')}
+                  </Text>
+                  <Ionicons name="chevron-forward" size={18} color={colors.textTertiary} />
+                </Pressable>
+
+                <Pressable
+                  style={({ pressed }) => [styles.sheetOption, { backgroundColor: pressed ? colors.inputBg : 'transparent' }]}
+                  onPress={() => { closeSheet(); router.push('/profile' as any); }}
+                >
+                  <View style={[styles.sheetOptionIcon, { backgroundColor: '#0EA5E920' }]}>
+                    <Ionicons name="settings-outline" size={20} color="#0EA5E9" />
+                  </View>
+                  <Text style={[styles.sheetOptionText, { color: colors.text, fontFamily: 'Poppins_500Medium' }]}>
+                    {t('settings')}
+                  </Text>
+                  <Ionicons name="chevron-forward" size={18} color={colors.textTertiary} />
+                </Pressable>
 
                 <Pressable
                   style={({ pressed }) => [styles.sheetOption, { backgroundColor: pressed ? colors.inputBg : 'transparent' }]}
@@ -306,6 +481,82 @@ export default function DashboardScreen() {
                     {t('logout')}
                   </Text>
                 </Pressable>
+              </>
+            ) : showEditProfile ? (
+              <>
+                <View style={styles.langHeader}>
+                  <Pressable onPress={() => setShowEditProfile(false)} hitSlop={12}>
+                    <Ionicons name="arrow-back" size={22} color={colors.text} />
+                  </Pressable>
+                  <Text style={[styles.langTitle, { color: colors.text, fontFamily: 'Poppins_600SemiBold' }]}>
+                    {t('editProfile')}
+                  </Text>
+                  <View style={{ width: 22 }} />
+                </View>
+
+                <View style={styles.editProfileForm}>
+                  {/* Profile Photo Picker */}
+                  <View style={styles.editPhotoSection}>
+                    <Pressable onPress={handlePickPhoto} style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}>
+                      {editPhoto ? (
+                        <Image source={{ uri: editPhoto }} style={styles.editPhotoImage} />
+                      ) : (
+                        <View style={[styles.editPhotoPlaceholder, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
+                          <Ionicons name="camera-outline" size={28} color={colors.textTertiary} />
+                        </View>
+                      )}
+                      <View style={[styles.editPhotoBadge, { backgroundColor: colors.primary }]}>
+                        <Ionicons name="pencil" size={12} color="#FFF" />
+                      </View>
+                    </Pressable>
+                    <Text style={[styles.editPhotoLabel, { color: colors.primary, fontFamily: 'Poppins_500Medium' }]}>
+                      {t('changePhoto')}
+                    </Text>
+                  </View>
+
+                  <Text style={[styles.editLabel, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>
+                    {t('fullName')}
+                  </Text>
+                  <TextInput
+                    style={[styles.editInput, { color: colors.text, backgroundColor: colors.inputBg, borderColor: colors.border, fontFamily: 'Poppins_400Regular' }]}
+                    value={editName}
+                    onChangeText={setEditName}
+                    placeholder={t('fullName')}
+                    placeholderTextColor={colors.textTertiary}
+                    autoFocus
+                  />
+
+                  <Text style={[styles.editLabel, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium', marginTop: 12 }]}>
+                    {t('email')}
+                  </Text>
+                  <View style={[styles.editInput, { backgroundColor: colors.inputBg, borderColor: colors.border, opacity: 0.6 }]}>
+                    <Text style={[styles.editInputDisabled, { color: colors.textTertiary, fontFamily: 'Poppins_400Regular' }]}>
+                      {user?.email}
+                    </Text>
+                  </View>
+
+                  <Text style={[styles.editLabel, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium', marginTop: 12 }]}>
+                    {t('phoneNumber') || 'Phone Number'}
+                  </Text>
+                  <TextInput
+                    style={[styles.editInput, { color: colors.text, backgroundColor: colors.inputBg, borderColor: colors.border, fontFamily: 'Poppins_400Regular' }]}
+                    value={editPhone}
+                    onChangeText={setEditPhone}
+                    placeholder={t('phoneNumber') || 'Phone Number'}
+                    placeholderTextColor={colors.textTertiary}
+                    keyboardType="phone-pad"
+                  />
+
+                  <Pressable
+                    style={({ pressed }) => [styles.editSaveBtn, { backgroundColor: colors.primary, opacity: pressed || saving ? 0.7 : 1 }]}
+                    onPress={handleSaveProfile}
+                    disabled={saving}
+                  >
+                    <Text style={[styles.editSaveBtnText, { fontFamily: 'Poppins_600SemiBold' }]}>
+                      {saving ? '...' : t('save')}
+                    </Text>
+                  </Pressable>
+                </View>
               </>
             ) : (
               <>
@@ -349,6 +600,26 @@ export default function DashboardScreen() {
           </Animated.View>
         </View>
       </Modal>
+
+      {/* Profile Prompt for first-time users */}
+      <ProfilePrompt
+        visible={showProfilePrompt}
+        onDismiss={async () => {
+          setShowProfilePrompt(false);
+          const count = parseInt((await AsyncStorage.getItem('@profile_prompt_count')) || '0', 10);
+          await AsyncStorage.setItem('@profile_prompt_count', String(count + 1));
+        }}
+        onSave={async (data) => {
+          if (store) {
+            await store.updateUserProfile({ name: data.username });
+          }
+          // Store gender/age locally
+          await AsyncStorage.setItem('@user_gender', data.gender);
+          await AsyncStorage.setItem('@user_age', data.age);
+          setShowProfilePrompt(false);
+          await AsyncStorage.setItem('@profile_prompt_count', '3');
+        }}
+      />
     </View>
   );
 }
@@ -363,14 +634,14 @@ const styles = StyleSheet.create({
   greetingSmall: { fontSize: 12, color: 'rgba(255,255,255,0.7)' },
   userName: { fontSize: 16, color: '#FFF', maxWidth: 180 },
   headerBadge: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.1)', justifyContent: 'center', alignItems: 'center' },
-  createBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderRadius: 14, gap: 8, backgroundColor: '#FFF' },
-  createBtnText: { color: '#1B4332', fontSize: 15 },
+  createBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderRadius: 16, gap: 8, backgroundColor: '#FFF', ...shadow({ offsetY: 4, opacity: 0.1, radius: 12, elevation: 4 }) },
+  createBtnText: { color: '#0EA5E9', fontSize: 15 },
   listHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, paddingTop: 20, paddingBottom: 12 },
   listTitle: { fontSize: 17 },
   listCount: { paddingHorizontal: 12, paddingVertical: 5, borderRadius: 12, overflow: 'hidden' as const },
   listCountText: { fontSize: 13 },
   listContent: { paddingHorizontal: 16 },
-  siteCard: { borderRadius: 16, padding: 16, marginBottom: 12, borderWidth: 1, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
+  siteCard: { borderRadius: 18, padding: 16, marginBottom: 12, borderWidth: 1, ...shadow({ offsetY: 4, opacity: 0.06, radius: 14, elevation: 3 }) },
   siteCardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
   siteIconBg: { width: 42, height: 42, borderRadius: 13, justifyContent: 'center', alignItems: 'center' },
   siteCardInfo: { flex: 1, marginLeft: 12 },
@@ -402,4 +673,21 @@ const styles = StyleSheet.create({
   langOption: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 16, paddingHorizontal: 16, borderRadius: 14, borderWidth: 1.5, marginBottom: 10 },
   langNative: { fontSize: 16 },
   langLabel: { fontSize: 12, marginTop: 2 },
+  editProfileForm: { paddingHorizontal: 4 },
+  editLabel: { fontSize: 13, marginBottom: 6 },
+  editInput: { borderWidth: 1, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15, justifyContent: 'center' },
+  editInputDisabled: { fontSize: 15 },
+  editSaveBtn: { marginTop: 20, paddingVertical: 14, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  editSaveBtnText: { color: '#FFF', fontSize: 15 },
+  helpFab: { position: 'absolute', right: 20, zIndex: 100 },
+  helpFabGradient: { width: 56, height: 56, borderRadius: 28, justifyContent: 'center', alignItems: 'center' },
+  avatarImage: { width: 46, height: 46, borderRadius: 23, borderWidth: 2, borderColor: 'rgba(255,255,255,0.3)' },
+  sheetAvatarImage: { width: 64, height: 64, borderRadius: 32, marginBottom: 10 },
+  editPhotoSection: { alignItems: 'center', marginBottom: 20 },
+  editPhotoImage: { width: 80, height: 80, borderRadius: 40 },
+  editPhotoPlaceholder: { width: 80, height: 80, borderRadius: 40, justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderStyle: 'dashed' as const },
+  editPhotoBadge: { position: 'absolute', bottom: 0, right: 0, width: 26, height: 26, borderRadius: 13, justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: '#FFF' },
+  editPhotoLabel: { fontSize: 13, marginTop: 8 },
+  notifBadge: { position: 'absolute', top: -4, right: -4, minWidth: 18, height: 18, borderRadius: 9, backgroundColor: '#EF4444', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 4, borderWidth: 2, borderColor: '#0284C7' },
+  notifBadgeText: { color: '#FFF', fontSize: 10, fontWeight: '700' },
 });

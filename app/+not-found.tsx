@@ -1,39 +1,24 @@
-// template
-import { Link, Stack } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { useEffect } from 'react';
+import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { router } from 'expo-router';
 
 export default function NotFoundScreen() {
-  return (
-    <>
-      <Stack.Screen options={{ title: "Oops!" }} />
-      <View style={styles.container}>
-        <Text style={styles.title}>This screen doesn&apos;t exist.</Text>
+  useEffect(() => {
+    // Redirect unknown routes to the root index which handles auth routing
+    router.replace('/');
+  }, []);
 
-        <Link href="/" style={styles.link}>
-          <Text style={styles.linkText}>Go to home screen!</Text>
-        </Link>
-      </View>
-    </>
+  return (
+    <View style={styles.container}>
+      <ActivityIndicator size="large" color="#0EA5E9" />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  link: {
-    marginTop: 15,
-    paddingVertical: 15,
-  },
-  linkText: {
-    fontSize: 14,
-    color: "#2e78b7",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

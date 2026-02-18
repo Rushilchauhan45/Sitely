@@ -6,7 +6,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { useApp } from '@/lib/AppContext';
 import { useThemeColors } from '@/constants/colors';
+import { shadow } from '@/constants/shadows';
 import { Worker } from '@/lib/types';
+import { GradientHeader, EmptyState, AnimatedPressable } from '@/components/ui';
 import * as store from '@/lib/storage';
 import * as Haptics from 'expo-haptics';
 
@@ -28,20 +30,47 @@ export default function WorkersScreen() {
 
   const handleDelete = (worker: Worker) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    Alert.alert(t('delete'), `${worker.name}?`, [
-      { text: t('cancel'), style: 'cancel' },
-      { text: t('delete'), style: 'destructive', onPress: async () => {
-        await store.deleteWorker(worker.id);
-        if (siteId) store.getWorkers(siteId).then(setWorkers);
-      }},
-    ]);
+
+    const doDelete = async () => {
+      await store.deleteWorker(worker.id);
+      if (siteId) store.getWorkers(siteId).then(setWorkers);
+    };
+
+    if (Platform.OS === 'web') {
+      if (confirm(`${t('delete')} ${worker.name}?`)) {
+        doDelete();
+      }
+    } else {
+      Alert.alert(t('delete'), `${worker.name}?`, [
+        { text: t('cancel'), style: 'cancel' },
+        { text: t('delete'), style: 'destructive', onPress: doDelete },
+      ]);
+    }
   };
 
   const getInitials = (n: string) => n.trim().split(' ').map(p => p[0]?.toUpperCase() || '').slice(0, 2).join('');
 
+  const handleEdit = (worker: Worker) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    router.push({
+      pathname: '/site/add-worker',
+      params: {
+        siteId: siteId || '',
+        editId: worker.id,
+        editName: worker.name,
+        editAge: worker.age || '',
+        editContact: worker.contact || '',
+        editVillage: worker.village || '',
+        editCategory: worker.category,
+        editPhotoUri: worker.photoUri || '',
+      },
+    });
+  };
+
   const renderWorker = ({ item }: { item: Worker }) => (
     <Pressable
       style={[styles.workerCard, { backgroundColor: colors.surface, borderColor: colors.borderLight }]}
+      onPress={() => handleEdit(item)}
       onLongPress={() => handleDelete(item)}
     >
       {item.photoUri ? (
@@ -78,15 +107,10 @@ export default function WorkersScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { paddingTop: insets.top + webTopInset + 12, backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
-        <Pressable onPress={() => router.back()} hitSlop={16}>
-          <Ionicons name="arrow-back" size={24} color={colors.text} />
-        </Pressable>
-        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Poppins_600SemiBold' }]}>
-          {t('allWorkers')} ({workers.length})
-        </Text>
-        <View style={{ width: 24 }} />
-      </View>
+      <GradientHeader
+        title={`${t('allWorkers')} (${workers.length})`}
+        gradient={['#0E7C86', '#14B8A6']}
+      />
       <FlatList
         data={workers}
         renderItem={renderWorker}
@@ -94,12 +118,7 @@ export default function WorkersScreen() {
         contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + webBottomInset + 20 }]}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
-          <View style={styles.empty}>
-            <Ionicons name="people-outline" size={56} color={colors.textTertiary} />
-            <Text style={[styles.emptyText, { color: colors.textSecondary, fontFamily: 'Poppins_500Medium' }]}>
-              {t('noWorkers')}
-            </Text>
-          </View>
+          <EmptyState icon="people-outline" title={t('noWorkers')} />
         }
       />
     </View>
@@ -111,7 +130,7 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingBottom: 14, borderBottomWidth: 1 },
   headerTitle: { fontSize: 18, flex: 1, textAlign: 'center' },
   list: { padding: 16, gap: 10 },
-  workerCard: { flexDirection: 'row', alignItems: 'center', padding: 14, borderRadius: 14, borderWidth: 1, gap: 12 },
+  workerCard: { flexDirection: 'row', alignItems: 'center', padding: 14, borderRadius: 16, borderWidth: 1, gap: 12, ...shadow({ offsetY: 3, opacity: 0.06, radius: 10 }) },
   workerPhoto: { width: 48, height: 48, borderRadius: 24 },
   avatar: { width: 48, height: 48, borderRadius: 24, justifyContent: 'center', alignItems: 'center' },
   avatarText: { fontSize: 18 },

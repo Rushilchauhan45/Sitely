@@ -3,27 +3,40 @@ import { View, Text, StyleSheet, Pressable, ScrollView, TextInput, useColorSchem
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { useApp } from '@/lib/AppContext';
 import { useThemeColors } from '@/constants/colors';
+import { shadow } from '@/constants/shadows';
+import { AnimatedPressable } from '@/components/ui';
 import * as store from '@/lib/storage';
 import * as Haptics from 'expo-haptics';
 
 export default function AddWorkerScreen() {
-  const { siteId } = useLocalSearchParams<{ siteId: string }>();
+  const { siteId, editId, editName, editAge, editContact, editVillage, editCategory, editPhotoUri } = useLocalSearchParams<{
+    siteId: string;
+    editId?: string;
+    editName?: string;
+    editAge?: string;
+    editContact?: string;
+    editVillage?: string;
+    editCategory?: string;
+    editPhotoUri?: string;
+  }>();
+  const isEditMode = !!editId;
   const { t } = useApp();
   const colorScheme = useColorScheme();
   const colors = useThemeColors(colorScheme);
   const insets = useSafeAreaInsets();
   const webTopInset = Platform.OS === 'web' ? 67 : 0;
 
-  const [name, setName] = useState('');
-  const [age, setAge] = useState('');
-  const [contact, setContact] = useState('');
-  const [village, setVillage] = useState('');
-  const [category, setCategory] = useState<'karigar' | 'majdur'>('majdur');
-  const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [name, setName] = useState(editName || '');
+  const [age, setAge] = useState(editAge || '');
+  const [contact, setContact] = useState(editContact || '');
+  const [village, setVillage] = useState(editVillage || '');
+  const [category, setCategory] = useState<'karigar' | 'majdur'>((editCategory as 'karigar' | 'majdur') || 'majdur');
+  const [photoUri, setPhotoUri] = useState<string | null>(editPhotoUri || null);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -42,17 +55,32 @@ export default function AddWorkerScreen() {
       Alert.alert('', t('required'));
       return;
     }
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    await store.addWorker({
-      siteId: siteId || '',
-      name: name.trim(),
-      age: age.trim(),
-      contact: contact.trim(),
-      village: village.trim(),
-      category,
-      photoUri,
-    });
-    router.back();
+    try {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      if (isEditMode && editId) {
+        await store.updateWorker(editId, {
+          name: name.trim(),
+          age: age.trim(),
+          contact: contact.trim(),
+          village: village.trim(),
+          category,
+          photoUri,
+        });
+      } else {
+        await store.addWorker({
+          siteId: siteId || '',
+          name: name.trim(),
+          age: age.trim(),
+          contact: contact.trim(),
+          village: village.trim(),
+          category,
+          photoUri,
+        });
+      }
+      router.back();
+    } catch (e) {
+      Alert.alert(t('authError'), String(e));
+    }
   };
 
   const getInitials = (n: string) => {
@@ -64,20 +92,25 @@ export default function AddWorkerScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { paddingTop: insets.top + webTopInset + 12, backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
-        <Pressable onPress={() => router.back()} hitSlop={16}>
-          <Ionicons name="close" size={28} color={colors.text} />
+      <LinearGradient
+        colors={['#E8840C', '#F59E0B']}
+        style={[styles.header, { paddingTop: insets.top + webTopInset + 12 }]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <Pressable onPress={() => router.back()} hitSlop={16} style={styles.headerBackBtn}>
+          <Ionicons name="close" size={22} color="#FFF" />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Poppins_600SemiBold' }]}>
-          {t('addWorkers')}
+        <Text style={[styles.headerTitle, { color: '#FFF', fontFamily: 'Poppins_600SemiBold' }]}>
+          {isEditMode ? (t('editWorker') || 'Edit Worker') : t('addWorkers')}
         </Text>
         <Pressable
           onPress={handleSave}
-          style={({ pressed }) => [styles.saveBtn, { backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1 }]}
+          style={({ pressed }) => [styles.saveBtn, { backgroundColor: 'rgba(255,255,255,0.25)', opacity: pressed ? 0.8 : 1 }]}
         >
           <Ionicons name="checkmark" size={22} color="#FFF" />
         </Pressable>
-      </View>
+      </LinearGradient>
 
       <ScrollView contentContainerStyle={styles.form} showsVerticalScrollIndicator={false}>
         <Pressable onPress={pickImage} style={styles.photoSection}>
@@ -141,9 +174,10 @@ export default function AddWorkerScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingBottom: 14, borderBottomWidth: 1 },
-  headerTitle: { fontSize: 18 },
-  saveBtn: { width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center' },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingBottom: 18, borderBottomLeftRadius: 24, borderBottomRightRadius: 24 },
+  headerBackBtn: { width: 36, height: 36, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.15)', justifyContent: 'center', alignItems: 'center' },
+  headerTitle: { fontSize: 18, flex: 1, textAlign: 'center' },
+  saveBtn: { width: 40, height: 40, borderRadius: 14, justifyContent: 'center', alignItems: 'center' },
   form: { padding: 24, gap: 4 },
   photoSection: { alignItems: 'center', marginBottom: 16 },
   photoPreview: { width: 100, height: 100, borderRadius: 50 },
@@ -151,7 +185,7 @@ const styles = StyleSheet.create({
   avatarText: { fontSize: 32 },
   photoLabel: { fontSize: 13, marginTop: 8 },
   label: { fontSize: 13, marginTop: 12, marginBottom: 6 },
-  input: { borderRadius: 12, borderWidth: 1, paddingHorizontal: 16, paddingVertical: 14, fontSize: 16 },
+  input: { borderRadius: 14, borderWidth: 1, paddingHorizontal: 16, paddingVertical: 14, fontSize: 16, ...shadow({ opacity: 0.04, radius: 6, elevation: 1 }) },
   categoryRow: { flexDirection: 'row', gap: 10 },
   categoryChip: { paddingVertical: 14, borderRadius: 12, borderWidth: 1.5, alignItems: 'center' },
   categoryText: { fontSize: 15 },

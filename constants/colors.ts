@@ -1,80 +1,88 @@
+// ============================================================
+// 🎨 SITELY COLOR THEME
+// Sky Blue + Black Premium Dark Theme
+// ============================================================
+
 const Colors = {
-  light: {
-    primary: '#1B4332',
-    primaryLight: '#E8F5E9',
-    primaryDark: '#143D2B',
-    primaryGradientStart: '#1B4332',
-    primaryGradientEnd: '#2D6A4F',
-    secondary: '#40916C',
-    secondaryLight: '#D8F3DC',
-    accent: '#52B788',
-    accentLight: '#B7E4C7',
-    gold: '#D4A373',
-    goldLight: '#FFF1E6',
-    background: '#F8FAF9',
-    surface: '#FFFFFF',
-    surfaceElevated: '#FFFFFF',
-    cardGlass: 'rgba(255,255,255,0.85)',
-    text: '#1A1D26',
-    textSecondary: '#5C6370',
-    textTertiary: '#9CA3AF',
-    border: '#E2E8F0',
-    borderLight: '#F1F5F3',
-    error: '#DC3545',
-    errorLight: '#FEE2E2',
-    success: '#198754',
-    successLight: '#D1FAE5',
-    warning: '#F59E0B',
-    warningLight: '#FEF3C7',
-    tint: '#1B4332',
-    tabIconDefault: '#9CA3AF',
-    tabIconSelected: '#1B4332',
-    cardShadow: 'rgba(27,67,50,0.08)',
-    overlay: 'rgba(0,0,0,0.5)',
-    inputBg: '#F1F5F3',
-    shimmer: '#E8F0EC',
-  },
-  dark: {
-    primary: '#52B788',
-    primaryLight: '#1A3A2A',
-    primaryDark: '#40916C',
-    primaryGradientStart: '#2D6A4F',
-    primaryGradientEnd: '#52B788',
-    secondary: '#74C69D',
-    secondaryLight: '#1A2F25',
-    accent: '#95D5B2',
-    accentLight: '#1F3D2F',
-    gold: '#D4A373',
-    goldLight: '#2A221A',
-    background: '#0D1117',
-    surface: '#161B22',
-    surfaceElevated: '#1C2333',
-    cardGlass: 'rgba(22,27,34,0.88)',
-    text: '#F0F6FC',
-    textSecondary: '#8B949E',
-    textTertiary: '#6E7681',
-    border: '#21262D',
-    borderLight: '#1A1F27',
-    error: '#F87171',
-    errorLight: '#3B1A1A',
-    success: '#34D399',
-    successLight: '#1A3A2A',
-    warning: '#FBBF24',
-    warningLight: '#3B2F1A',
-    tint: '#52B788',
-    tabIconDefault: '#6E7681',
-    tabIconSelected: '#52B788',
-    cardShadow: 'rgba(0,0,0,0.4)',
-    overlay: 'rgba(0,0,0,0.7)',
-    inputBg: '#1C2333',
-    shimmer: '#21262D',
-  },
+  // Primary palette
+  skyBlue: '#00BFFF',
+  skyBlueLight: '#38BDF8',
+  skyBlueMedium: '#0EA5E9',
+  skyBlueDark: '#0284C7',
+  skyBlueMuted: '#075985',
+
+  // Secondary (blacks)
+  black: '#0A0A0A',
+  blackLight: '#111111',
+  blackMedium: '#1A1A2E',
+  blackCard: '#16213E',
+  blackSurface: '#0F3460',
+
+  // Accent (whites)
+  white: '#FFFFFF',
+  whiteOff: '#F8FAFC',
+  whiteMuted: '#E2E8F0',
+  whiteSubtle: '#94A3B8',
+
+  // Gradients (use as arrays)
+  gradientPrimary: ['#00BFFF', '#0284C7', '#0A0A0A'] as const,
+  gradientButton: ['#00BFFF', '#0EA5E9', '#0284C7'] as const,
+  gradientCard: ['rgba(0,191,255,0.12)', 'rgba(14,165,233,0.06)', 'rgba(10,10,10,0.9)'] as const,
+  gradientHeader: ['#0EA5E9', '#0284C7', '#1A1A2E'] as const,
+  gradientDark: ['#1A1A2E', '#16213E', '#0F3460'] as const,
+
+  // Glass effects
+  glass: 'rgba(255,255,255,0.08)',
+  glassLight: 'rgba(255,255,255,0.12)',
+  glassMedium: 'rgba(255,255,255,0.05)',
+  glassBorder: 'rgba(255,255,255,0.15)',
+  glassBorderLight: 'rgba(0,191,255,0.2)',
+
+  // Functional
+  error: '#EF4444',
+  errorLight: 'rgba(239,68,68,0.15)',
+  success: '#10B981',
+  successLight: 'rgba(16,185,129,0.15)',
+  warning: '#F59E0B',
+  warningLight: 'rgba(245,158,11,0.15)',
+  gold: '#FBBF24',
+
+  // Semantic theme tokens (dark-first since app is dark themed)
+  primary: '#00BFFF',
+  primaryLight: 'rgba(0,191,255,0.15)',
+  primaryDark: '#0284C7',
+  primaryGradientStart: '#00BFFF',
+  primaryGradientEnd: '#0284C7',
+  secondary: '#38BDF8',
+  secondaryLight: 'rgba(56,189,248,0.12)',
+  accent: '#F8FAFC',
+  accentLight: 'rgba(248,250,252,0.08)',
+
+  background: '#0A0A0A',
+  surface: '#1A1A2E',
+  surfaceElevated: '#16213E',
+  cardGlass: 'rgba(26,26,46,0.85)',
+  text: '#F8FAFC',
+  textSecondary: '#94A3B8',
+  textTertiary: '#64748B',
+  border: 'rgba(255,255,255,0.1)',
+  borderLight: 'rgba(255,255,255,0.05)',
+  tint: '#00BFFF',
+  tabIconDefault: '#64748B',
+  tabIconSelected: '#00BFFF',
+  cardShadow: 'rgba(0,191,255,0.15)',
+  overlay: 'rgba(0,0,0,0.7)',
+  inputBg: 'rgba(255,255,255,0.06)',
+  shimmer: 'rgba(0,191,255,0.08)',
+  glow: 'rgba(0,191,255,0.4)',
+  glowStrong: 'rgba(0,191,255,0.6)',
 };
 
 export default Colors;
 
-export type ThemeColors = typeof Colors.light;
+export type ThemeColors = typeof Colors;
 
-export function useThemeColors(colorScheme: 'light' | 'dark' | null | undefined): ThemeColors {
-  return Colors[colorScheme === 'dark' ? 'dark' : 'light'];
+// Since the app is always dark themed, this returns the same palette
+export function useThemeColors(_colorScheme?: 'light' | 'dark' | null): ThemeColors {
+  return Colors;
 }
