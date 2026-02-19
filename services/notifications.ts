@@ -7,8 +7,41 @@
  */
 
 import * as Notifications from 'expo-notifications';
+
 import { Platform } from 'react-native';
 import type { TodoItem } from '@/lib/types';
+
+// Daily to-do ke liye (har 1 ghante me)
+export async function scheduleHourlyReminder(todoTitle: string) {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: '⏰ Daily Todo Reminder',
+      body: `Don't forget: ${todoTitle}`,
+      sound: 'default',
+    },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+      seconds: 3600, // 1 ghanta = 3600 seconds
+      repeats: true,
+    },
+  });
+}
+
+// Monthly to-do ke liye (har 12 ghante me)
+export async function scheduleTwelveHourlyReminder(todoTitle: string) {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: '⏰ Monthly Todo Reminder',
+      body: `Don't forget: ${todoTitle}`,
+      sound: 'default',
+    },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+      seconds: 43200, // 12 ghante = 43200 seconds
+      repeats: true,
+    },
+  });
+}
 
 // ── Configure notification behavior ──────────────────────────────────
 Notifications.setNotificationHandler({
